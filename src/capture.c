@@ -69,6 +69,7 @@ int main(int argc, char *argv[])
 		{ 0 , "compressed",		"GLC_COMPRESSED_BUFFER_SIZE",	NULL},
 		{ 0 , "uncompressed",		"GLC_UNCOMPRESSED_BUFFER_SIZE",	NULL},
 		{ 0 , "unscaled",		"GLC_UNSCALED_BUFFER_SIZE",	NULL},
+		{ 0 , "preload",		"GLC_PRELOAD",			NULL},
 		{ 0 , NULL,			NULL,				NULL}
 	};
 
@@ -193,6 +194,7 @@ usage:
 	       "                               default is 25 MiB\n"
 	       "      --unscaled=SIZE        unscaled picture stream buffer size in MiB,\n"
 	       "                               default is 25 MiB\n"
+	       "      --preload=LIB_PATH     preload the libs from LIB_PATH with LD_PRELOAD\n"
 	       "  -V, --version              print glc version and exit\n"
 	       "  -h, --help                 show this help\n");
 	return EXIT_FAILURE;
@@ -352,6 +354,11 @@ int set_opt(struct glc_opt_s *option, const char *arg)
 
 			return 0;
 		}
+	} else if (strncmp(option->name, "preload",
+	    sizeof("preload") - 1) == 0) {
+		/* Append the user-defined libs to LD_PRELOAD */
+		env_append("LD_PRELOAD", arg, ':');
+		return 0;
 	}
 
 	/* otherwise just normal argument handling */
